@@ -1,6 +1,10 @@
 const HOLEHEIGHT = 300;
 const GAMEHEIGHT = 800;
 const GAMEWIDTH = 800;
+const JUMPHEIGHT_PERFRAME = 5;
+const JUMPHEIGHT = 100;
+const GRAVITY = 3;
+const SCROLLVELOCITY = 5;
 
 class Entity {
   constructor() {
@@ -26,7 +30,10 @@ class Pipe extends Entity {
     this.setLeft(GAMEWIDTH);
   }
   getRect() {
-    return this.pipe.getBoundingClientRect();
+    return {
+      pipeBottom: this.pipeBottom.getBoundingClientRect(),
+      pipeTop: this.pipeTop.getBoundingClientRect(),
+    };
   }
   isColliding(birdPos) {
     let pipeTopPos = this.pipeTop.getBoundingClientRect();
@@ -45,7 +52,7 @@ class Pipe extends Entity {
     return true;
   }
   randomizeHeights() {
-    const bottomPipeHeight = parseInt(Math.random() * 400);
+    const bottomPipeHeight = parseInt(Math.random() * (GAMEHEIGHT / 2));
     const topPipeHeight = GAMEHEIGHT - bottomPipeHeight - HOLEHEIGHT;
     this.pipeTop.style.height = `${topPipeHeight}px`;
     this.pipeBottom.style.height = `${bottomPipeHeight}px`;
@@ -55,13 +62,16 @@ class Pipe extends Entity {
     this.pipeBottom.style.left = `${left}px`;
     this.pipeTop.style.left = `${left}px`;
   }
+  get width() {
+    return this.getRect().pipeTop.width;
+  }
 }
 
 class Bird extends Entity {
   constructor(birdElem) {
     super();
     this.bird = birdElem;
-    this.topPos = 200;
+    this.topPos = GAMEHEIGHT / 3;
   }
   getRect() {
     return this.bird.getBoundingClientRect();
@@ -93,9 +103,14 @@ class Score {
     this.score = 0;
     this.scoreElem = scoreElem;
     this.highScoreElem = highScoreElem;
+    this.highScore = 0;
     const highScore = parseInt(localStorage.getItem("highscore"));
-    this.highScoreElem.innerText = highScore;
-    this.highScore = highScore || 0;
+    if (!highScore) {
+      this.highScore = 0;
+    } else {
+      this.highScore = highScore;
+    }
+    this.highScoreElem.innerText = this.highScore;
   }
   incScore() {
     this.score += 1;
@@ -117,7 +132,7 @@ class Game {
     this.scoreElem = scoreElem;
     this.isOver = false;
     this.pipeLeft = GAMEWIDTH;
-    this.jumpHeight = 0;
+    this.remainingJump = 0;
     this.pipeElem.setLeft(this.pipeLeft);
   }
   run() {
@@ -126,22 +141,23 @@ class Game {
         clearInterval(id);
         return;
       }
-      if (this.pipeLeft <= -100) {
+      if (this.pipeLeft <= -this.pipeElem.width) {
         this.pipeLeft = GAMEWIDTH;
         this.scoreElem.incScore();
-        const bottomPipeHeight = parseInt(Math.random() * 300) + 50;
+        const bottomPipeHeight =
+          parseInt(Math.random() * (GAMEHEIGHT / 2)) + GAMEHEIGHT / 16;
         const topPipeHeight = GAMEHEIGHT - bottomPipeHeight - HOLEHEIGHT;
         pipeTop.style.height = `${topPipeHeight}px`;
         pipeBottom.style.height = `${bottomPipeHeight}px`;
       } else {
-        this.pipeLeft -= 5;
+        this.pipeLeft -= SCROLLVELOCITY;
       }
       this.pipeElem.setLeft(this.pipeLeft);
-      if (this.jumpHeight === 0) {
-        this.birdElem.fall(3);
+      if (this.remainingJump === 0) {
+        this.birdElem.fall(GRAVITY);
       } else {
-        this.birdElem.jump(5);
-        this.jumpHeight -= 5;
+        this.birdElem.jump(JUMPHEIGHT_PERFRAME);
+        this.remainingJump -= JUMPHEIGHT_PERFRAME;
       }
       if (pipe.isColliding(this.birdElem.getRect())) {
         this.isOver = true;
@@ -151,7 +167,7 @@ class Game {
   }
   triggerJump() {
     if (!this.birdElem.isAtTop()) {
-      this.jumpHeight += 100;
+      this.remainingJump += JUMPHEIGHT;
     }
   }
 }

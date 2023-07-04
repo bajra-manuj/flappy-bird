@@ -11,8 +11,8 @@
   border: solid black 1px;
   height: 800px;
   width: 800px;
-  margin: auto;
-  margin-top: 50px;
+  /* margin: auto; */
+  /* margin-top: 50px; */
 }
 
 .pipe {
@@ -56,4 +56,17 @@
 }
 .soaring {
   transform: rotate(-45deg);
+}
+
+.scoreboard {
+  font-size: 3rem;
+  padding-left: 5%;
+  padding-bottom: 0%;
+  text-align: justify;
+}
+
+main {
+  display: flex;
+  margin-top: 5%;
+  justify-content: center;
 }
