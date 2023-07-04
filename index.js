@@ -6,13 +6,23 @@ const pipe = document.getElementById("pipe");
 const hole = document.getElementById("hole");
 const bird = document.getElementById("bird");
 const scoreElem = document.getElementById("score");
+const highScoreElem = document.getElementById("highscore");
 
 let jumpHeight = 0;
 let birdTop = 200;
 let score = 0;
-const highScore = parseInt(localStorage.getItem("highscore"));
-if (highScore) {
-  document.getElementById("highscore").innerText = highScore;
+let pipeLeft = 800;
+let initialOffset = Math.random() * 300 + 50;
+hole.style.top = `${initialOffset}px`;
+const highScore = getHighScoreFromLocalStorage();
+highScoreElem.innerText = highScore;
+
+function getHighScoreFromLocalStorage() {
+  const highScore = parseInt(localStorage.getItem("highscore"));
+  if (highScore) {
+    return highScore;
+  }
+  return 0;
 }
 
 function frame() {
@@ -57,9 +67,6 @@ function isColliding() {
 }
 
 var id = setInterval(frame, 8.3);
-let pipeLeft = 800;
-let initialOffset = Math.random() * 300 + 50;
-hole.style.top = `${initialOffset}px`;
 document.addEventListener("keydown", (e) => {
   if (e.keyCode === 32) {
     jumpHeight += 100;
