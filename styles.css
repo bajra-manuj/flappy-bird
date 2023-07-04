@@ -5,6 +5,7 @@
 }
 
 #game {
+  background-image: url("./background.png");
   overflow: hidden;
   position: relative;
   border: solid black 1px;
@@ -14,28 +15,23 @@
   margin-top: 50px;
 }
 
-/* #background { */
-/*   position: absolute; */
-/*   height: 100%; */
-/*   width: 100%; */
-/**/
-/*   animation-name: bg; */
-/*   animation-duration: 1s; */
-/*   animation-iteration-count: infinite; */
-/*   animation-timing-function: linear; */
-/* } */
-/**/
-#pipe {
+.pipe {
   position: absolute;
   background-color: black;
-  margin: auto;
-  height: 800px;
   width: 100px;
-  /* animation-name: pipe; */
-  /* animation-duration: 1.5s; */
-  /* animation-iteration-count: infinite; */
-  /* animation-timing-function: linear; */
 }
+
+#pipe-bottom img {
+  width: 100%;
+  height: 100%;
+}
+
+#pipe-top img {
+  width: 100%;
+  height: 100%;
+  transform: rotate(180deg);
+}
+
 #hole {
   position: absolute;
   background-color: white;
@@ -61,14 +57,3 @@
 .soaring {
   transform: rotate(-45deg);
 }
-/**/
-/* @keyframes bg { */
-/*   from { */
-/*     background-image: url("./background.png"); */
-/*     left: 100%; */
-/*   } */
-/*   to { */
-/*     background-image: url("./background.png"); */
-/*     left: 0%; */
-/*   } */
-/* } */

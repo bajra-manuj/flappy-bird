@@ -1,9 +1,11 @@
 // moving background
 // set highscore and store in localstorage
+const HOLEHEIGHT = 300;
+const GAMEHEIGHT = 800;
 
 const game = document.getElementById("game");
-const pipe = document.getElementById("pipe");
-const hole = document.getElementById("hole");
+const pipeTop = document.getElementById("pipe-top");
+const pipeBottom = document.getElementById("pipe-bottom");
 const bird = document.getElementById("bird");
 const scoreElem = document.getElementById("score");
 const highScoreElem = document.getElementById("highscore");
@@ -13,10 +15,10 @@ let birdTop = 200;
 let score = 0;
 let pipeLeft = 800;
 let initialOffset = Math.random() * 300 + 50;
-hole.style.top = `${initialOffset}px`;
 const highScore = getHighScoreFromLocalStorage();
 highScoreElem.innerText = highScore;
 
+pipeBottom.style.bottom = "0px";
 function getHighScoreFromLocalStorage() {
   const highScore = parseInt(localStorage.getItem("highscore"));
   if (highScore) {
@@ -28,14 +30,17 @@ function getHighScoreFromLocalStorage() {
 function frame() {
   if (pipeLeft === -100) {
     pipeLeft = 800;
+    const bottomPipeHeight = parseInt(Math.random() * 300) + 50;
+    const topPipeHeight = GAMEHEIGHT - bottomPipeHeight - HOLEHEIGHT;
+    pipeTop.style.height = `${topPipeHeight}px`;
+    pipeBottom.style.height = `${bottomPipeHeight}px`;
     score += 1;
     scoreElem.innerText = score;
-    let offset = Math.max(Math.random() * 450, 50);
-    hole.style.top = `${offset}px`;
   } else {
     pipeLeft -= 5;
-    pipe.style.left = `${pipeLeft}px`;
   }
+  pipeBottom.style.left = `${pipeLeft}px`;
+  pipeTop.style.left = `${pipeLeft}px`;
   if (jumpHeight === 0) {
     birdTop = Math.min(birdTop + 3, 750);
     bird.className = "";
@@ -54,17 +59,27 @@ function frame() {
 
 function isColliding() {
   let birdPos = bird.getBoundingClientRect();
-  let holePos = hole.getBoundingClientRect();
-  let pipePos = pipe.getBoundingClientRect();
+  let pipeTopPos = pipeTop.getBoundingClientRect();
+  let pipeBottomPos = pipeBottom.getBoundingClientRect();
+  let holePos = {
+    bottom: pipeBottomPos.top,
+    top: pipeTopPos.bottom,
+  };
 
   if (birdPos.top > holePos.top && birdPos.bottom < holePos.bottom) {
+    console.log(false);
     return false;
   }
-  if (birdPos.right < pipePos.left || birdPos.left > pipePos.right) {
+  if (birdPos.right < pipeTopPos.left || birdPos.left > pipeTopPos.right) {
     return false;
   }
   return true;
 }
+
+const bottomPipeHeight = parseInt(Math.random() * 400);
+const topPipeHeight = GAMEHEIGHT - bottomPipeHeight - HOLEHEIGHT;
+pipeTop.style.height = `${topPipeHeight}px`;
+pipeBottom.style.height = `${bottomPipeHeight}px`;
 
 var id = setInterval(frame, 8.3);
 document.addEventListener("keydown", (e) => {
