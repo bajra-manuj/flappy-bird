@@ -141,24 +141,23 @@ class Game {
         clearInterval(id);
         return;
       }
+      //move pipe
       if (this.pipeLeft <= -this.pipeElem.width) {
         this.pipeLeft = GAMEWIDTH;
         this.scoreElem.incScore();
-        const bottomPipeHeight =
-          parseInt(Math.random() * (GAMEHEIGHT / 2)) + GAMEHEIGHT / 16;
-        const topPipeHeight = GAMEHEIGHT - bottomPipeHeight - HOLEHEIGHT;
-        pipeTop.style.height = `${topPipeHeight}px`;
-        pipeBottom.style.height = `${bottomPipeHeight}px`;
+        this.pipeElem.randomizeHeights();
       } else {
         this.pipeLeft -= SCROLLVELOCITY;
       }
       this.pipeElem.setLeft(this.pipeLeft);
+      // move bird
       if (this.remainingJump === 0) {
         this.birdElem.fall(GRAVITY);
       } else {
         this.birdElem.jump(JUMPHEIGHT_PERFRAME);
         this.remainingJump -= JUMPHEIGHT_PERFRAME;
       }
+      // check collision
       if (pipe.isColliding(this.birdElem.getRect())) {
         this.isOver = true;
         this.scoreElem.updateHighScore();
