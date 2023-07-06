@@ -18,6 +18,9 @@ class Entity {
   isColliding() {
     throw new Error("Method 'isColliding()' must be implemented.");
   }
+  resetPosition() {
+    throw new Error("Method 'resetPosition()' must be implemented.");
+  }
 }
 
 class Pipe extends Entity {
@@ -28,12 +31,17 @@ class Pipe extends Entity {
     this.randomizeHeights();
     this.pipeBottom.style.bottom = "0px";
     this.setLeft(GAMEWIDTH);
+    this.resetPosition();
   }
   getRect() {
     return {
       pipeBottom: this.pipeBottom.getBoundingClientRect(),
       pipeTop: this.pipeTop.getBoundingClientRect(),
     };
+  }
+  resetPosition() {
+    this.setLeft(GAMEWIDTH);
+    this.randomizeHeights();
   }
   isColliding(birdPos) {
     let pipeTopPos = this.pipeTop.getBoundingClientRect();
@@ -72,6 +80,12 @@ class Bird extends Entity {
     super();
     this.bird = birdElem;
     this.topPos = GAMEHEIGHT / 3;
+    this.resetPosition();
+  }
+  resetPosition() {
+    this.topPos = GAMEHEIGHT / 3;
+    this.bird.style.left = "20px";
+    this.bird.style.top = `${this.topPos}px`;
   }
   getRect() {
     return this.bird.getBoundingClientRect();
@@ -116,6 +130,13 @@ class Score {
     this.score += 1;
     this.scoreElem.innerText = this.score;
   }
+  getScore() {
+    return this.score;
+  }
+  resetScore() {
+    this.score = 0;
+    this.scoreElem.innerText = this.score;
+  }
   updateHighScore() {
     if (this.score > this.highScore) {
       localStorage.setItem("highscore", this.score);
@@ -133,7 +154,24 @@ class Game {
     this.isOver = false;
     this.pipeLeft = GAMEWIDTH;
     this.remainingJump = 0;
-    this.pipeElem.setLeft(this.pipeLeft);
+    this.gameSpeed = SCROLLVELOCITY;
+    this.level = 0;
+    this.reset();
+    this.isOver = true;
+  }
+  reset() {
+    this.level = 0;
+    this.isOver = false;
+    this.pipeLeft = GAMEWIDTH;
+    this.remainingJump = 0;
+    this.gameSpeed = SCROLLVELOCITY;
+    this.pipeElem.resetPosition();
+    this.birdElem.resetPosition();
+    this.scoreElem.resetScore();
+  }
+  restart() {
+    this.reset();
+    this.run();
   }
   run() {
     let id = setInterval(() => {
@@ -146,8 +184,12 @@ class Game {
         this.pipeLeft = GAMEWIDTH;
         this.scoreElem.incScore();
         this.pipeElem.randomizeHeights();
+        const current_score = this.scoreElem.getScore();
+        if (current_score % 5 === 0) {
+          this.gameSpeed = Math.min(20, this.level + 2 + SCROLLVELOCITY);
+        }
       } else {
-        this.pipeLeft -= SCROLLVELOCITY;
+        this.pipeLeft -= this.gameSpeed;
       }
       this.pipeElem.setLeft(this.pipeLeft);
       // move bird
@@ -169,6 +211,9 @@ class Game {
       this.remainingJump += JUMPHEIGHT;
     }
   }
+  gameIsOver() {
+    return this.isOver;
+  }
 }
 
 const game = document.getElementById("game");
@@ -187,6 +232,9 @@ gameObj.run();
 
 document.addEventListener("keydown", (e) => {
   if (e.keyCode === 32) {
+    if (gameObj.gameIsOver()) {
+      gameObj.restart();
+    }
     gameObj.triggerJump();
   }
 });
