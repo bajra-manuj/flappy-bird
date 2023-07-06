@@ -1,7 +1,12 @@
+@font-face {
+  font-family: "Silkscreen";
+  src: url("./Silkscreen-Bold.ttf");
+}
 * {
   padding: 0;
   margin: 0;
   box-sizing: border-box;
+  font-family: Silkscreen, sans-serif;
 }
 
 #game {
@@ -59,7 +64,10 @@
 }
 
 .scoreboard {
-  font-size: 3rem;
+  z-index: 20;
+  position: absolute;
+  right: 5%;
+  font-size: 2rem;
   padding-left: 5%;
   padding-bottom: 0%;
   text-align: justify;
@@ -69,4 +77,66 @@ main {
   display: flex;
   margin-top: 5%;
   justify-content: center;
+}
+audio {
+  display: none;
+}
+
+.death-background {
+  z-index: 20;
+  display: none;
+  position: absolute;
+  top: 30%;
+  background: rgba(0, 0, 0, 0.5);
+  height: 20%;
+  white-space: nowrap;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  text-align: center;
+  opacity: 1;
+  animation: fade-in 10s linear;
+}
+.death-background p {
+  color: #ff0000;
+  letter-spacing: 5px;
+  font-size: 8rem;
+  font-weight: 400;
+  animation: fade-in 10s linear, text-zoom 5s linear;
+}
+#hint {
+  position: absolute;
+  width: 100%;
+  bottom: 5%;
+  text-align: center;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  25% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes text-zoom {
+  0% {
+    font-size: 5rem;
+  }
+  25% {
+    font-size: 6rem;
+  }
+  50% {
+    font-size: 7rem;
+  }
+  75% {
+    font-size: 8rem;
+  }
+  100% {
+    font-size: 8rem;
+  }
 }

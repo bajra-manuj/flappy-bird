@@ -168,6 +168,8 @@ class Game {
     this.pipeElem.resetPosition();
     this.birdElem.resetPosition();
     this.scoreElem.resetScore();
+    deathScreen.style.display = "none";
+    deathAudio.load();
   }
   restart() {
     this.reset();
@@ -176,11 +178,15 @@ class Game {
   run() {
     let id = setInterval(() => {
       if (this.isOver) {
+        hint.style.display = "block";
         clearInterval(id);
         return;
       }
       //move pipe
       if (this.pipeLeft <= -this.pipeElem.width) {
+        hint.style.display = "none";
+        pointAudio.load();
+        pointAudio.play();
         this.pipeLeft = GAMEWIDTH;
         this.scoreElem.incScore();
         this.pipeElem.randomizeHeights();
@@ -203,6 +209,8 @@ class Game {
       if (pipe.isColliding(this.birdElem.getRect())) {
         this.isOver = true;
         this.scoreElem.updateHighScore();
+        deathScreen.style.display = "flex";
+        deathAudio.play();
       }
     }, 8.3);
   }
@@ -216,12 +224,16 @@ class Game {
   }
 }
 
+const hint = document.getElementById("hint");
 const game = document.getElementById("game");
 const pipeTop = document.getElementById("pipe-top");
 const pipeBottom = document.getElementById("pipe-bottom");
 const bird = document.getElementById("bird");
 const scoreElem = document.getElementById("score");
 const highScoreElem = document.getElementById("highscore");
+const pointAudio = document.getElementById("point");
+const deathScreen = document.getElementById("death-screen");
+const deathAudio = document.getElementById("death-audio");
 
 let birdElem = new Bird(bird);
 let pipe = new Pipe(pipeBottom, pipeTop);
@@ -235,6 +247,7 @@ document.addEventListener("keydown", (e) => {
     if (gameObj.gameIsOver()) {
       gameObj.restart();
     }
+
     gameObj.triggerJump();
   }
 });

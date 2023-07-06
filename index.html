@@ -10,6 +10,20 @@
     <main>
       <div id="game">
         <div id="background"></div>
+        <div class="scoreboard">
+          <div class="score">
+            <span>Score: </span>
+            <span id="score">0</span>
+          </div>
+          <div class="highscore">
+            <span>Highscore: </span>
+            <span id="highscore">0</span>
+          </div>
+        </div>
+        <div id="death-screen" class="death-background">
+          <p>You Died</p>
+        </div>
+        <div id="hint"><p>Press Space to Start/Jump</p></div>
         <div class="pipe" id="pipe-top">
           <img src="./pipe.png" alt="" />
         </div>
@@ -20,17 +34,15 @@
           <img src="bird.png" alt="" />
         </div>
       </div>
-      <div class="scoreboard">
-        <div class="score">
-          <span>Score: </span>
-          <span id="score">0</span>
-        </div>
-        <div class="highscore">
-          <span>Highscore: </span>
-          <span id="highscore">0</span>
-        </div>
-      </div>
     </main>
+    <audio controls id="death-audio">
+      <source src="dead.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
+    <audio controls id="point">
+      <source src="point.mp3" type="audio/mpeg" />
+      Your browser does not support the audio element.
+    </audio>
     <script src="index.js"></script>
   </body>
 </html>
